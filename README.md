@@ -22,11 +22,11 @@ Make sure you have the AWS access key and secret key ready with you. The first s
 sudo ./install_configure_aws_cli.bash
 ```
 
-Next, let's spawn a few instances on AWS. We'll use the '''spawn_instances_aws.py' script to do this step. The "--help" flag of this script gives your more information on how to use it.
+Next, let's spawn a few instances on AWS. We'll use the ```spawn_instances_aws.py``` script to do this step. The "--help" flag of this script gives your more information on how to use it.
 
-'''
+```
 python spawn_instances_aws.py --help
-'''
+```
 
 WORK IN PROGRESS
 
