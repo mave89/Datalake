@@ -57,7 +57,7 @@ def spawnInstances():
     try:
         retcode = subprocess.call(CMD1, shell=True)
         if retcode == 0:
-            print "Sucessfully spawned %d AWS instances. Use the below IPs and user \"ubuntu\" or the right user for the instance type you have spawned using your AWS key to ssh into these instances" %COUNT
+            print "Sucessfully spawned %d AWS instances. Use the below IPs and user \"ubuntu\" or the right user for the instance type you have spawned using your AWS key to ssh into these instances." %COUNT
             IPs = subprocess.check_output(['bash', '-c', CMD2])
             print IPs
     except:
