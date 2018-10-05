@@ -6,6 +6,7 @@ We'll be using Twitter APIs to pull in some data, store it in Hive tables, and u
 
 1. AWS - https://aws.amazon.com
 2. Hadoop Distributed File System (HDFS) - https://hadoop.apache.org/docs/r1.2.1/hdfs_design.html
+3. Ambari - https://ambari.apache.org/
 3. Hive - https://hive.apache.org/
 4. Tableau - https://tableau.com
 
@@ -27,6 +28,13 @@ Next, let's spawn a few instances on AWS. We'll use the ```spawn_instances_aws.p
 ```
 python spawn_instances_aws.py --help
 ```
+Once you have your instances up and running, the next step is to create a Hadoop cluster on these. We'll be using Ambari to setup our Hadoop cluster making the life of the Hadoop admin relatively easy. But the first step in doing that is to make sure that all our servers can ssh into each other without using any password.
+
+```
+./setup_ssh.sh hosts.txt /Users/faiz/Desktop/faiz-openlab.pem 
+```
+
+File hosts.txt should contain all the ip addresses of your servers that you intend to use to build a hadoop cluster.
 
 WORK IN PROGRESS
 
