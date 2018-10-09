@@ -1,9 +1,18 @@
 '''
-1. Make this file define a function to show its usage - DONE
-2. This script assumes that all keys and secrets are set in the environment - DONE
-3. It will use the tweepy library - https://github.com/tweepy/tweepy
-4. Get tweets from Twitter and store in a HIVE table on HDFS.
-5. Things that can be done with this data include
+Dependencies:
+
+1. Tweepy should be installed - https://github.com/tweepy/tweepy
+
+Description:
+
+This script assumes that all keys and secrets are set in the environment. 
+These are the keys and secrets that you get from your Twitter developer
+account. 
+
+We use the tweepy library to get Tweets from
+Twitter and store it in a Hive database on HDFS. 
+
+Few things that can be done with this data include
 a) #tweets by day
 b) Think more
 '''
@@ -13,6 +22,7 @@ import argparse
 import os
 import tweepy
 import json
+import csv
 
 __author__ = 'Faiz Abidi'
 
@@ -72,7 +82,7 @@ def inspectArguments():
    
     arguments_list = [hashtag, consumerKey, consumerSecret, accessToken, accessSecret]
 
-    return arguments_list
+    return arguments_list 
 
 def searchTweets(arguments_list):
     HASHTAG = arguments_list[0]
@@ -87,32 +97,77 @@ def searchTweets(arguments_list):
     auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
     api = tweepy.API(auth,wait_on_rate_limit=True)
 
+    '''
+    We are using the cursor API to make sure that we get more than the tweets
+    shows on one page (can't be more than 100 as per Twitter API's limitations.)
+
+    '''
+    tweet_number = 0
     for tweet in tweepy.Cursor(api.search, 
                     q=HASHTAG, 
                     count=100, 
-                    since="2018-09-01").items():
+                    tweet_mode='extended',
+                    since="2018-08-01").items():
+        
+        # Increment the tweet number
+        tweet_number += 1
         
         # Get the json part
         tweet = json.dumps(tweet._json)
+        # Load the tweets
+        #print tweet
         tweet = json.loads(tweet)
-        
         # We only need selected parts of the json
         tweet_date = tweet['created_at']
         tweet_id = tweet['id']
-        tweet_text = tweet['text'].encode('UTF-8')
-        tweet_url = tweet['entities']['media'][0]['url']
-        tweet_result_type = tweet['metadata']['result_type']
-        tweet_language = tweet['metadata']['iso_language_code']
+        tweet_text = tweet['full_text'].encode('utf-8')
+        # Remove newlines
+        tweet_text = tweet_text.replace('\n', ' ').replace('\r', '')
+        #print tweet_text
+        tweet_meta_result_type = tweet['metadata']['result_type']
+        tweet_language = tweet['metadata']['iso_language_code'].encode('UTF-8')
         tweet_user_id = tweet['user']['id']
-        tweet_user_screen_name = tweet['user']['screen_name']
-        tweet_user_location = tweet['user']['location']
-        
-        break
-        #print "\n*****************\n"'''
+        try:
+            tweet_url = tweet['retweeted_status']['entities']['media'][0]['url']
+        except KeyError as ke:
+            tweet_url = ""
+        tweet_user_name = tweet['user']['name'].encode('UTF-8')
+        tweet_user_screen_name = tweet['user']['screen_name'].encode('UTF-8')
+        tweet_user_location = tweet['user']['location'].encode('UTF-8')
+        tweet_user_friends_count = tweet['user']['friends_count']
+        tweet_retweet = tweet['retweeted']
+        tweet_retweet_count = tweet['retweet_count']
+        tweet_followers_count = tweet['user']['followers_count']
+
+        # Print number of tweets found so far. This is only informational data
+        if tweet_number == 1:
+            print "%d tweet found. Adding to the CSV file." %tweet_number
+        else:
+            print "%d tweets found. Adding to the CSV file." %tweet_number
+
+        # Store it in a CSV file locally that we'll move to HDFS afterwards
+        with open('tweets.csv', mode='a') as tweet_file:
+            tweet_writer = csv.writer(tweet_file, delimiter=',', \
+                quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            tweet_writer.writerow([tweet_date, 
+                                tweet_id, \
+                                tweet_text,\
+                                tweet_meta_result_type,\
+                                tweet_language,\
+                                tweet_user_id,\
+                                tweet_url,\
+                                tweet_user_name,\
+                                tweet_user_screen_name,\
+                                tweet_user_location,\
+                                tweet_user_friends_count,\
+                                tweet_retweet,\
+                                tweet_retweet_count,\
+                                tweet_followers_count])
 
 def main():
     args = inputArguments()
     arguments_list = inspectArguments()
+    print "Starting to search Tweets. Hang on..."
     searchTweets(arguments_list)
     
 if __name__ == "__main__":
