@@ -35,15 +35,28 @@ Once you have your instances up and running, the next step is to create a Hadoop
 ./setup_ssh.sh hosts.txt /Users/faiz/Desktop/faiz-openlab.pem 
 ```
 
-File hosts.txt should contain all the ip addresses of your servers that you intend to use to build a hadoop cluster.
+File hosts.txt should contain all the IP addresses of your servers that you intend to use to build a Hadoop cluster.
 
-You also need to add the (hostname, private IP) of all your servers in /etc/hosts on all your servers.
+You also need to add the (hostname, private IP) of all your servers in /etc/hosts file on all your servers.
 
 ```
 ./appendHostnames_etcHosts.bash hosts.txt faiz-openlab.pem
 ```
 
 We are good with our cluster now. The next step is to install Hadoop and for that, we'll be using open-source HDP provided by Hortonworks. 
+
+ssh to any one of the servers that you want to assign as the master node and install Ambari server on it.
+
+```
+./installAmbari.bash
+```
+
+The above script is interactive and you'll be asked several questions during the installation. Once the installation is finshed, point your broweser to this server's IP like SEREVR_PUBLIC_IP:8080 and you'll be presented with a GUI that you can use to setup your Hadoop cluster. In my setup, I installed datanode and nodemanagers on two servers while keeping all the master services on my master node. I installed HDFS, YARN, MapReduce2, ZooKeeper, Tez, and Hive. 
+
+1. Ambari server - http://204.236.207.193:8080
+2. NameNode - http://204.236.207.193:50070
+3. Resource manager - http://204.236.207.193:8088/cluster
+4. Job history server - http://52.91.33.10:19888/jobhistory
 
 WORK IN PROGRESS
 
