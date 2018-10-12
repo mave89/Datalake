@@ -23,7 +23,6 @@ display_usage() {
     }
 
 CSV_FILE=$1
-echo $CSV_FILE
 
 if [ $# -ne 1 ]; then
     display_usage
