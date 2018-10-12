@@ -66,6 +66,12 @@ python Tweets/downloadTweets.py --help
 
 In our case, we downloaded any many free tweets as possible containing ```#donaldtrump```. CSV file ```donaldtrump-tweets.csv``` has all the data we collected.
 
+Next step is to put this data into a Hive table. The advantage of doing this is that Hive ultimately stores data onto HDFS that provides scalability, fault tolerance, high availability, etc..
+
+```
+./Tweets/moveTweets_to_HiveDB.bash /home/ubuntu/git/Datalake/Data/donaldtrump-tweets.csv 
+``` 
+
 WORK IN PROGRESS
 
 ## Contribute
