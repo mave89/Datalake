@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This script added the hostnames and IPs of all the servers in the clusters to each other's /etc/hosts file.
+# This script adds the hostnames and IPs of all the servers in the clusters to each other's /etc/hosts file.
 
 set -e
 
