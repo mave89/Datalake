@@ -21,18 +21,18 @@ WORK IN PROGRESS.
 Make sure you have the AWS access key and secret key ready with you. The first step is to install the AWS cli on your machine. 
 
 ```
-sudo ./install_configure_aws_cli.bash
+sudo ./Infra_Setup/install_configure_aws_cli.bash 
 ```
 
 Next, let's spawn a few instances on AWS. We'll use the ```spawn_instances_aws.py``` script to do this step. The "--help" flag of this script gives your more information on how to use it.
 
 ```
-python spawn_instances_aws.py --help
+python Infra_Setup/spawn_instances_aws.py --help
 ```
 Once you have your instances up and running, the next step is to create a Hadoop cluster on these. We'll be using Ambari to setup our Hadoop cluster making the life of the Hadoop admin relatively easy. But the first step in doing that is to make sure that all our servers can ssh into each other without using any password.
 
 ```
-./setup_ssh.sh hosts.txt /Users/faiz/Desktop/faiz-openlab.pem 
+./Infra_Setup/setup_ssh.sh /Users/faiz/Desktop/faiz-openlab.pem 
 ```
 
 File hosts.txt should contain all the IP addresses of your servers that you intend to use to build a Hadoop cluster.
@@ -40,7 +40,7 @@ File hosts.txt should contain all the IP addresses of your servers that you inte
 You also need to add the (hostname, private IP) of all your servers in /etc/hosts file on all your servers.
 
 ```
-./appendHostnames_etcHosts.bash hosts.txt faiz-openlab.pem
+./Infra_Setup/appendHostnames.bash Infra_Setup/hosts.txt faiz-openlab.pem
 ```
 
 We are good with our cluster now. The next step is to install Hadoop and for that, we'll be using open-source HDP provided by Hortonworks. 
@@ -48,7 +48,7 @@ We are good with our cluster now. The next step is to install Hadoop and for tha
 ssh to any one of the servers that you want to assign as the master node and install Ambari server on it.gggg
 
 ```
-./installAmbari.bash
+./Infra_Setup/installAmbari.bash
 ```
 
 The above script is interactive and you'll be asked several questions during the installation. Once the installation is finshed, point your broweser to this server's IP like SERVER_PUBLIC_IP:8080 and you'll be presented with a GUI that you can use to setup your Hadoop cluster. In my setup, I installed datanode and nodemanagers on two servers while keeping all the master services on my master node. I installed only the bare minimum things needed for my Datalake project that include HDFS, YARN, MapReduce2, ZooKeeper, Tez, and Hive in my cluster. 
@@ -58,13 +58,13 @@ The above script is interactive and you'll be asked several questions during the
 3. Resource manager - http://204.236.207.193:8088/cluster
 4. Job history server - http://52.91.33.10:19888/jobhistory
 
-It's time to download some tweets now. The python script ```downloadTweets.py``` has a ```--help``` tag that you can use to see your options. But if you don't provide any, it will use the hashtag "#donaldtrump" and download tweets containing that hashtag
+It's time to download some tweets now. The python script ```downloadTweets.py``` has a ```--help``` tag that you can use to see your options. But if you don't provide any, it will use the hashtag "#donaldtrump" and download tweets containing that hashtag.
 
 ```
-python downloadTweets.py --help
+python Tweets/downloadTweets.py --help
 ```
 
-In our case, we downloaded any many free tweets as possible containing "#donaldtrump". CSV file "donaldtrump-tweets.csv" has all the data we collected.
+In our case, we downloaded any many free tweets as possible containing ```#donaldtrump```. CSV file ```donaldtrump-tweets.csv``` has all the data we collected.
 
 WORK IN PROGRESS
 
