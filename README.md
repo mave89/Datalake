@@ -72,6 +72,10 @@ Next step is to put this data into a Hive table. The advantage of doing this is 
 ./Tweets/moveTweets_to_HiveDB.bash /home/ubuntu/git/Datalake/Data/donaldtrump-tweets.csv 
 ``` 
 
+Next step is to connect our Hiveserver2 with Tableau. You need to have Tableau installed and also have the corresponding ODBC drives from Hortonworks. In my case, I downloaded the OSX drives from Hortonwork's website - https://hortonworks.com/downloads/#data-platform. Once you have the driver, you can connect using user ```ubuntu``` or whatever user you created and your ```pem``` file. Then extract the schema and the table in Tableau and you'll get all your data loaded as shown below.
+
+![alt text](https://github.com/faizabidi/Datalake/blob/master/Screenshots/Tableau_Data_Load.png)
+
 WORK IN PROGRESS
 
 ## Contribute
