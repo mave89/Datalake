@@ -81,9 +81,16 @@ def inspectArguments():
 
     return arguments_list 
 
-# Remove non-ascii characters
-def remove_non_ascii(input):
-    return unidecode(unicode(input, encoding = "utf-8"))
+# Remove double quotes, single quotes, commas, newlines, tabs
+def dataCleaning(input):
+    input = input\
+                .replace('\n', '') \
+                .replace('\r', '') \
+                .replace('\t', '') \
+                .replace(',', '') \
+                .replace('\"', '') \
+                .replace('\'', '')
+    return input
 
 def searchTweets(arguments_list):
     HASHTAG = arguments_list[0]
@@ -112,45 +119,71 @@ def searchTweets(arguments_list):
 
         # Get the json part
         tweet = json.dumps(tweet._json)
+
         # Load the tweets
         tweet = json.loads(tweet)
 
         # We only need selected parts of the json
-        tweet_date = tweet['created_at']
-        tweet_id = tweet['id']
-        tweet_text = tweet['full_text'].encode('utf-8')
-        # Remove newlines and commas
-        tweet_text = tweet_text\
-                            .replace('\n', '') \
-                            .replace('\r', '') \
-                            .replace(',', '')
-        # Also remove any non-ascii characters
-        remove_non_ascii(tweet_text)
-        tweet_meta_result_type = tweet['metadata']['result_type']
-        tweet_language = tweet['metadata']['iso_language_code'].encode('UTF-8')
-        tweet_user_id = tweet['user']['id']
-        tweet_user_name = tweet['user']['name'].encode('UTF-8')
-        tweet_user_screen_name = tweet['user']['screen_name'].encode('UTF-8')
-        # Remove any newlines
-        tweet_user_location = tweet['user']['location'].encode('UTF-8')\
-                            .replace('\n', '') \
-                            .replace('\r', '')
+        tweet_date = str(tweet['created_at'])
+        tweet_date = dataCleaning(tweet_date)
+
+        tweet_id = str(tweet['id'])
+        tweet_id = dataCleaning(tweet_date)
+
+        tweet_text = str(tweet['full_text'].encode('utf-8'))
+        tweet_text = dataCleaning(tweet_text)
+
+        tweet_meta_result_type = str(tweet['metadata']['result_type'])
+        tweet_meta_result_type = dataCleaning(tweet_meta_result_type)
+
+        tweet_language = str(tweet['metadata']['iso_language_code'].encode('UTF-8'))
+        tweet_language = dataCleaning(tweet_language)
+
+        tweet_user_id = str(tweet['user']['id'])
+        tweet_user_id = dataCleaning(tweet_user_id)
+
+        tweet_user_name = str(tweet['user']['name'].encode('UTF-8'))
+        tweet_user_name = dataCleaning(tweet_user_name)
+
+        tweet_user_screen_name = str(tweet['user']['screen_name'].encode('UTF-8'))
+        tweet_user_screen_name = dataCleaning(tweet_user_screen_name)
+
+        tweet_user_location = str(tweet['user']['location'].encode('UTF-8'))
+        tweet_user_location = dataCleaning(tweet_user_location)
         # If there's no location set
         if tweet_user_location == "":
             tweet_user_location = "NULL"
-        tweet_user_friends_count = tweet['user']['friends_count']
-        tweet_retweet = tweet['retweeted']
-        tweet_retweet_count = tweet['retweet_count']
-        tweet_followers_count = tweet['user']['followers_count']
+        
+        tweet_user_friends_count = str(tweet['user']['friends_count'])
+        tweet_user_friends_count = dataCleaning(tweet_user_friends_count)
+        # If there are not friends
+        if tweet_user_friends_count is "":
+            tweet_user_friends_count = 0
+
+        tweet_retweet = str(tweet['retweeted'])
+        tweet_retweet = dataCleaning(tweet_retweet)
+
+        tweet_retweet_count = str(tweet['retweet_count'])
+        tweet_retweet_count = dataCleaning(tweet_retweet_count)
+        # If no retweets
+        if tweet_retweet_count is "":
+            tweet_retweet_count = 0
+
+        tweet_followers_count = str(tweet['user']['followers_count'])
+        tweet_followers_count = dataCleaning(tweet_followers_count)
+        # If no followers       
+        if tweet_followers_count is "":
+            tweet_followers_count = 0
+
         tweet_url = "https://twitter.com/" + tweet_user_screen_name + \
-                "/status/" + str(tweet_id)
+                "/status/" + tweet_id
 
         # Print number of tweets found so far. This is only informational data
         if tweet_number == 1:
             print "%d tweet found. Adding to the CSV file." %tweet_number
         else:
             print "%d tweets found. Adding to the CSV file." %tweet_number
-        #print tweet_user_location
+
         # Store it in a CSV file locally that we'll move to HDFS later
         filename = HASHTAG[1:]
         with open('%s-tweets.csv' %filename, mode='a') as tweet_file:
@@ -176,12 +209,13 @@ def main():
     args = inputArguments()
     arguments_list = inspectArguments()
     print "Starting to search Tweets. Hang on..."
+
     try:
         searchTweets(arguments_list)
         HASHTAG = args.hashtag
         if HASHTAG is None:
-            hashtag = "donaldtrump"
-        print "Tweets saved in the file %s-tweets.csv." %HASHTAG
+            HASHTAG = "donaldtrump"
+        print "Tweets saved in the file %s-tweets.csv" %HASHTAG
     except:
         print "Something went wrong, tweets coudn't be downloaded. Please check the logs."
     
