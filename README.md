@@ -23,7 +23,7 @@ Make sure you have the AWS access key and secret key ready with you. The first s
 sudo ./Infra_Setup/install_configure_aws_cli.bash 
 ```
 
-Next, let's spawn a few instances on AWS. We'll use the ```spawn_instances_aws.py``` script to do this step. The "--help" flag of this script gives your more information on how to use it.
+Next, let's spawn a few instances on AWS. We'll use the ```spawn_instances_aws.py``` script to do this step. The ```--help``` flag of this script gives you more information on how to use it.
 
 ```
 python Infra_Setup/spawn_instances_aws.py --help
@@ -34,9 +34,7 @@ Once you have your instances up and running, the next step is to create a Hadoop
 ./Infra_Setup/setup_ssh.sh /Users/faiz/Desktop/faiz-openlab.pem 
 ```
 
-File hosts.txt should contain all the IP addresses of your servers that you intend to use to build a Hadoop cluster.
-
-You also need to add the (hostname, private IP) of all your servers in /etc/hosts file on all your servers.
+File ```hosts.txt``` should contain all the IP addresses of your servers that you intend to use to build a Hadoop cluster. You also need to add the (hostname, private IP) of all your servers in /etc/hosts file on all your servers.
 
 ```
 ./Infra_Setup/appendHostnames.bash Infra_Setup/hosts.txt faiz-openlab.pem
@@ -44,13 +42,13 @@ You also need to add the (hostname, private IP) of all your servers in /etc/host
 
 We are good with our cluster now. The next step is to install Hadoop and for that, we'll be using open-source HDP provided by Hortonworks. 
 
-ssh to any one of the servers that you want to assign as the master node and install Ambari server on it.gggg
+ssh to any one of the servers that you want to assign as the master node and install Ambari server on it.
 
 ```
 ./Infra_Setup/installAmbari.bash
 ```
 
-The above script is interactive and you'll be asked several questions during the installation. Once the installation is finshed, point your broweser to this server's IP like SERVER_PUBLIC_IP:8080 and you'll be presented with a GUI that you can use to setup your Hadoop cluster. In my setup, I installed datanode and nodemanagers on two servers while keeping all the master services on my master node. I installed only the bare minimum things needed for my Datalake project that include HDFS, YARN, MapReduce2, ZooKeeper, Tez, and Hive in my cluster. 
+The above script is interactive and you'll be asked several questions during the installation. Once the installation is finshed, point your broweser to this server's IP like SERVER_PUBLIC_IP:8080 and you'll be presented with a GUI that you can use to setup your Hadoop cluster. In my setup, I installed datanode and nodemanagers on two servers while keeping all the master services on my master node. I installed only the bare minimum things needed for my Datalake project that include HDFS, YARN, MapReduce2, ZooKeeper, Tez, and Hive.
 
 1. Ambari server - http://204.236.207.193:8080
 2. NameNode - http://204.236.207.193:50070
@@ -60,28 +58,28 @@ The above script is interactive and you'll be asked several questions during the
 
 ## Downloading tweets
 
-It's time to download some tweets now. The python script ```downloadTweets.py``` has a ```--help``` tag that you can use to see your options. But if you don't provide any, it will use the hashtag "#donaldtrump" and download tweets containing that hashtag.
+It's time to download some tweets now! The python script ```downloadTweets.py``` has a ```--help``` tag that you can use to see your options. But if you don't provide any, it will use the hashtag ```#donaldtrump``` and download tweets containing that hashtag.
 
 ```
 python Tweets/downloadTweets.py --help
 ```
 
-In our case, we downloaded any many free tweets as possible containing ```#donaldtrump```. CSV file ```donaldtrump-tweets.csv``` has all the data we collected.
+In our case, we downloaded as many free tweets as possible containing ```#donaldtrump```. CSV file ```donaldtrump-tweets.csv``` has all the data we collected that you find in the ```Data``` folder. 
 
 Next step is to put this data into a Hive table. The advantage of doing this is that Hive ultimately stores data onto HDFS that provides scalability, fault tolerance, high availability, etc..
 
 ```
 ./Tweets/moveTweets_to_HiveDB.bash /home/ubuntu/git/Datalake/Data/donaldtrump-tweets.csv 
 ``` 
-The screenshot below shows table tweets holding our data. It has 14 columns eaching saving a part of tweet data that we pulled using the Twitter API. 
+The screenshot below shows the table ```tweets``` holding our data. It has 14 columns eaching saving a part of tweet data that we previously pulled using the Twitter API. 
 
 ![alt text](https://github.com/faizabidi/Datalake/blob/master/Screenshots/Hive_DB.png)
 
-Next step is to connect our Hiveserver2 with Tableau. You need to have Tableau installed and also have the corresponding ODBC drivers from Hortonworks. In my case, I downloaded the OSX drivers from Hortonwork's website - https://hortonworks.com/downloads/#data-platform. Once you have the driver, you can connect using user ```ubuntu``` or whatever user you created and your ```pem``` file. Then extract the schema and the table in Tableau and you'll get all your data loaded as shown below.
+## Visualizations
+
+The next step is to connect our Hiveserver2 with Tableau. You need to have Tableau installed and also have the corresponding ODBC drivers from Hortonworks. In my case, I downloaded the OSX drivers from Hortonwork's website - https://hortonworks.com/downloads/#data-platform. Once you have the driver, you can connect using user ```ubuntu``` or whatever user you created and your ```pem``` file. Then extract the schema and the table in Tableau and you'll get all your data loaded as shown below.
 
 ![alt text](https://github.com/faizabidi/Datalake/blob/master/Screenshots/Tableau_Data_Load.png)
-
-## Visualizations
 
 Finally, we did some basic analysis on top of this data using Tableau. Below are 4 links to the visualizations we drew. Note that all this data is only for the period between Oct 4 to Oct 13, 2018 since I was using the free version of Twitter API that limits how much data you can scrape for free. 
 
