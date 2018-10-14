@@ -128,7 +128,7 @@ def searchTweets(arguments_list):
         tweet_date = dataCleaning(tweet_date)
 
         tweet_id = str(tweet['id'])
-        tweet_id = dataCleaning(tweet_date)
+        tweet_id = dataCleaning(tweet_id)
 
         tweet_text = str(tweet['full_text'].encode('utf-8'))
         tweet_text = dataCleaning(tweet_text)
