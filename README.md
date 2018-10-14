@@ -1,4 +1,5 @@
 # Datalake
+
 The idea of this project is to emulate a datalake kind of an architecture. 
 We'll be using Twitter APIs to pull in some data, store it in Hive tables, and use Tableau on top of it to draw some insights.
 
@@ -13,11 +14,9 @@ We'll be using Twitter APIs to pull in some data, store it in Hive tables, and u
 
 An AWS accont is needed to spin up a Hadoop cluster. We'll be using this to store all our tweets on HDFS. We'll also be using Hive tables to build our database. Finally, we'll connect Tableau and our Hive database to draw some visualizations.
 
- 
-## Screenshots
-WORK IN PROGRESS.
 
 ## Installation
+
 Make sure you have the AWS access key and secret key ready with you. The first step is to install the AWS cli on your machine. 
 
 ```
@@ -58,6 +57,9 @@ The above script is interactive and you'll be asked several questions during the
 3. Resource manager - http://204.236.207.193:8088/cluster
 4. Job history server - http://52.91.33.10:19888/jobhistory
 
+
+## Downloading tweets
+
 It's time to download some tweets now. The python script ```downloadTweets.py``` has a ```--help``` tag that you can use to see your options. But if you don't provide any, it will use the hashtag "#donaldtrump" and download tweets containing that hashtag.
 
 ```
@@ -71,15 +73,46 @@ Next step is to put this data into a Hive table. The advantage of doing this is 
 ```
 ./Tweets/moveTweets_to_HiveDB.bash /home/ubuntu/git/Datalake/Data/donaldtrump-tweets.csv 
 ``` 
+The screenshot below shows table tweets holding our data. It has 14 columns eaching saving a part of tweet data that we pulled using the Twitter API. 
 
-Next step is to connect our Hiveserver2 with Tableau. You need to have Tableau installed and also have the corresponding ODBC drives from Hortonworks. In my case, I downloaded the OSX drives from Hortonwork's website - https://hortonworks.com/downloads/#data-platform. Once you have the driver, you can connect using user ```ubuntu``` or whatever user you created and your ```pem``` file. Then extract the schema and the table in Tableau and you'll get all your data loaded as shown below.
+![alt text](https://github.com/faizabidi/Datalake/blob/master/Screenshots/Hive_DB.png)
+
+Next step is to connect our Hiveserver2 with Tableau. You need to have Tableau installed and also have the corresponding ODBC drivers from Hortonworks. In my case, I downloaded the OSX drivers from Hortonwork's website - https://hortonworks.com/downloads/#data-platform. Once you have the driver, you can connect using user ```ubuntu``` or whatever user you created and your ```pem``` file. Then extract the schema and the table in Tableau and you'll get all your data loaded as shown below.
 
 ![alt text](https://github.com/faizabidi/Datalake/blob/master/Screenshots/Tableau_Data_Load.png)
 
-WORK IN PROGRESS
+## Visualizations
 
-## Contribute
-WORK IN PROGRESS
+Finally, we did some basic analysis on top of this data using Tableau. Below are 4 links to the visualizations we drew. Note that all this data is only for the period between Oct 4 to Oct 13, 2018 since I was using the free version of Twitter API that limits how much data you can scrape for free. 
+
+1. Number of tweets posted each day having the hashtag donaldtrump - https://goo.gl/C5Cb7a
+
+2. Number of tweets posted in different languages - https://goo.gl/Wm8D9v
+
+3. Users who posted >= 15 tweets with the hashtag donaldtrump - https://goo.gl/449VT6
+
+4. List of popular users having >= 100k followers - https://goo.gl/CqvxMB 
+
 
 ## License
-WORK IN PROGRESS
+MIT License
+
+Copyright (c) [2018] [Faiz Abidi]
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
